@@ -1,6 +1,21 @@
-A CSV file containing science terms, their definitions, and image paths. Place this file in the root directory.
-
-keyword	description	image_path
-photosynthesis	"The process by which green plants use sunlight to synthesize food from CO2 and water."	path/to/photosynthesis.jpg
-gravity	"A natural phenomenon by which all things with mass are brought toward one another."	path/to/gravity.jpg
-mitosis	"A type of cell division resulting in two daughter cells with the same number of chromosomes."	path/to/mitosis.jpg
+keyword,description
+Atom,"The smallest unit of a chemical element, consisting of protons, neutrons, and electrons."
+Photosynthesis,"The process by which green plants and some organisms use sunlight to synthesize nutrients from carbon dioxide and water."
+Gravity,"A force that attracts two bodies toward each other, proportional to their mass."
+Evolution,"The process through which species change over time through natural selection and adaptation."
+Molecule,"A group of atoms bonded together, representing the smallest unit of a chemical compound."
+Cell,"The basic structural and functional unit of living organisms."
+DNA,"Deoxyribonucleic acid, the molecule that carries genetic information in living organisms."
+Neuron,"A specialized cell transmitting nerve impulses in the brain and nervous system."
+Ecosystem,"A biological community of interacting organisms and their physical environment."
+Galaxy,"A large system of stars, stellar remnants, interstellar gas, dust, and dark matter, held together by gravity."
+Big Bang,"The theory that explains the origin of the universe as a rapid expansion from a hot, dense state."
+Osmosis,"The movement of water molecules through a semipermeable membrane from a less concentrated solution to a more concentrated one."
+Force,"An influence that causes an object to undergo a change in motion, direction, or shape."
+Kinetic Energy,"The energy possessed by an object due to its motion."
+Plate Tectonics,"The theory explaining the movement of the Earth's lithospheric plates and the resulting geological activity."
+Black Hole,"A region in space where the gravitational pull is so strong that nothing, not even light, can escape."
+Quantum Mechanics,"A fundamental theory in physics describing the properties of nature on an atomic scale."
+Genetics,"The study of heredity and the variation of inherited characteristics."
+Chemical Reaction,"A process that leads to the transformation of one set of chemical substances into another."
+Climate Change,"Long-term changes in temperature, precipitation, and other atmospheric conditions on Earth."
