@@ -1,5 +1,5 @@
 
-keyword	description	image_path
-volcano eruption	"Create a volcano eruption experiment using baking soda and vinegar."	path/to/volcano_eruption.jpg
-water filtration system	"Build a simple water filtration system using sand, gravel, and charcoal."	path/to/water_filtration.jpg
-solar powered car	"Construct a miniature car that runs on solar energy."	path/to/solar_powered_car.jpg
+keyword,	description,	image_path
+volcano, eruption,	"Create a volcano eruption experiment using baking soda and vinegar."	path/to/volcano_eruption.jpg
+water, filtration, system	"Build a simple water filtration system using sand, gravel, and charcoal."	path/to/water_filtration.jpg
+solar, powered car,	"Construct a miniature car that runs on solar energy."	path/to/solar_powered_car.jpg
