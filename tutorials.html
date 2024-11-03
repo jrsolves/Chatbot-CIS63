@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Project Tutorials Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Science Project Tutorials</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('tutorials') }}">Science Tutorials</a>
+        </nav>
+    </header>
+    
+    <div class="main-container">
+        <div class="video-container">
+            <video id="response-video" controls autoplay>
+                <source src="{{ url_for('static', filename='response.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+        
+        <div class="chatbox">
+            <p id="chat-output"></p>
+        </div>
+
+        <form id="chat-form">
+            <input type="text" id="user-input" name="user_input" placeholder="Ask about a science project or term...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("chat-form").onsubmit = async function (event) {
+            event.preventDefault();
+            const userInput = document.getElementById("user-input").value;
+            
+            const response = await fetch("/chat_tutorial", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ user_input: userInput }),
+            });
+
+            const data = await response.json();
+            document.getElementById("chat-output").innerText = data.response;
+            const video = document.getElementById("response-video");
+            video.src = data.video_url;
+            video.load();
+            video.play();
+        };
+    </script>
+</body>
+</html>

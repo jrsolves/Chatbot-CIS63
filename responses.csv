@@ -1,0 +1,7 @@
+
+4. responses.csv
+This CSV file contains predefined responses for specific questions.
+
+question	response
+What is your name?	I am a science inquiry chatbot!
+Explain gravity	Gravity is the force by which a planet or other body

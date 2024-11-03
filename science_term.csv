@@ -1,0 +1,6 @@
+A CSV file containing science terms, their definitions, and image paths. Place this file in the root directory.
+
+keyword	description	image_path
+photosynthesis	"The process by which green plants use sunlight to synthesize food from CO2 and water."	path/to/photosynthesis.jpg
+gravity	"A natural phenomenon by which all things with mass are brought toward one another."	path/to/gravity.jpg
+mitosis	"A type of cell division resulting in two daughter cells with the same number of chromosomes."	path/to/mitosis.jpg
