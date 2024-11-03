@@ -1,4 +1,3 @@
- CSV file containing science project tutorials. Each entry includes a project name, a description, and an image path.
 
 keyword	description	image_path
 volcano eruption	"Create a volcano eruption experiment using baking soda and vinegar."	path/to/volcano_eruption.jpg
