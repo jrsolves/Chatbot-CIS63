@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Term Chatbot</title>
+
+    <script>
+        // Array of personalities with image sets and voices
+        const personalities = [
+            {
+                name: "Amanda",
+                images: [
+                    '/static/assets/character_amanda1.svg',
+                    '/static/assets/character_amanda2.svg',
+                    '/static/assets/character_amanda3.svg'
+                ],
+                voice: 'voice1'
+            },
+            {
+                name: "Alex",
+                images: [
+                    '/static/assets/character_alex1.svg',
+                    '/static/assets/character_alex2.svg',
+                    '/static/assets/character_alex3.svg'
+                ],
+                voice: 'voice2'
+            },
+            {
+                name: "Sophia",
+                images: [
+                    '/static/assets/character_sophia1.svg',
+                    '/static/assets/character_sophia2.svg',
+                    '/static/assets/character_sophia3.svg'
+                ],
+                voice: 'voice3'
+            }
+        ];
+
+        let currentPersonalityIndex = 0;
+        let currentImageIndex = 0;
+
+        // Preload all personality images
+        personalities.forEach(personality => {
+            personality.images.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        });
+
+        // Function to rotate images for the current personality
+        function rotateCharacterImage() {
+            const personality = personalities[currentPersonalityIndex];
+            const characterImage = document.getElementById('characterImage');
+            currentImageIndex = (currentImageIndex + 1) % personality.images.length;
+            characterImage.src = personality.images[currentImageIndex];
+        }
+
+        // Function to switch personality
+        function switchPersonality(index) {
+            currentPersonalityIndex = index;
+            currentImageIndex = 0;
+
+            const personality = personalities[currentPersonalityIndex];
+            const characterImage = document.getElementById('characterImage');
+            characterImage.src = personality.images[currentImageIndex];
+
+            // Update the voice (pseudo-code for demonstration)
+            console.log(`Switched to personality: ${personality.name}, voice: ${personality.voice}`);
+        }
+
+        // Set interval for image rotation
+        setInterval(rotateCharacterImage, 5000);
+    </script>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            margin: 50px;
+            font-family: Arial, sans-serif;
+        }
+        #sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ccc;
+        }
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 50%;
+        }
+        .thumbnail:hover {
+            border-color: #87CEFA;
+        }
+        #mainContent {
+            flex: 3;
+            text-align: center;
+        }
+        #mouthContainer {
+            position: relative;
+            margin: auto;
+            max-width: 400px;
+        }
+        #characterImage {
+            width: 100%;
+        }
+        #mouth_open, #mouth_closed {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar for Personality Thumbnails -->
+    <div id="sidebar">
+        <h3>Characters</h3>
+        <script>
+            personalities.forEach((personality, index) => {
+                document.write(`<img class="thumbnail" src="${personality.images[0]}" onclick="switchPersonality(${index})" alt="${personality.name}">`);
+            });
+        </script>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <h1>Science Term Chatbot</h1>
+
+        <!-- Mouth Container -->
+        <div id="mouthContainer">
+            <img id="characterImage" src="/static/assets/character_amanda1.svg" alt="Character">
+            <img id="mouth_open" src="/static/assets/mouth_open.svg">
+            <img id="mouth_closed" src="/static/assets/mouth_closed.svg" style="display: block;">
+        </div>
+
+        <!-- Input Container -->
+        <div id="inputContainer">
+            <input type="text" id="userInput" placeholder="Type your query here">
+            <button id="queryButton" onclick="queryAction()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        async function queryAction() {
+            const inputBox = document.getElementById('userInput');
+            const query = inputBox.value.trim();
+            if (query) {
+                inputBox.value = ''; // Clear input field
+                // Update chat log (omitted for brevity)
+                try {
+                    const response = await fetch('/get_definition', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `user_input=${encodeURIComponent(query)}`
+                    });
+                    const data = await response.json();
+                    if (data.audio_path) {
+                        playAudio(data.audio_path);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        function playAudio(audioPath) {
+            const audioPlayer = new Audio(audioPath);
+            const mouthOpen = document.getElementById('mouth_open');
+            const mouthClosed = document.getElementById('mouth_closed');
+
+            mouthOpen.style.display = 'block';
+            mouthClosed.style.display = 'none';
+
+            audioPlayer.onended = () => {
+                mouthOpen.style.display = 'none';
+                mouthClosed.style.display = 'block';
+            };
+
+            audioPlayer.play();
+        }
+    </script>
+
+</body>
+</html>

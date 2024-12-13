@@ -191,33 +191,6 @@ def clean_and_rewrite_csv(file_path):
     except Exception as e:
         logging.error(f"Error occurred while cleaning the CSV file: {e}")
 
-# Function to clean and rewrite the CSV
-def clean_and_rewrite_csv(file_path):
-    try:
-        # Load the CSV with appropriate error handling for encoding issues
-        df = pd.read_csv(file_path, encoding='utf-8', on_bad_lines='skip')
-
-        # Drop any duplicate rows
-        df.drop_duplicates(inplace=True)
-
-        # Ensure correct column headers
-        if not {'keyword', 'description'}.issubset(df.columns):
-            logging.error("The CSV file is missing required columns. Adding missing columns.")
-            for column in ['keyword', 'description']:
-                if column not in df.columns:
-                    df[column] = ""
-
-        # Reorder columns to ensure 'keyword' and 'description' are the first two columns
-        columns = ['keyword', 'description'] + [col for col in df.columns if col not in ['keyword', 'description']]
-        df = df[columns]
-
-        # Save the cleaned dataframe back to the CSV file
-        df.to_csv(file_path, index=False, encoding='utf-8')
-        logging.info("CSV file has been cleaned and saved successfully.")
-
-    except Exception as e:
-        logging.error(f"Error occurred while cleaning the CSV file: {e}")
-
 
 # Flask app setup
 app = Flask(__name__)
@@ -246,51 +219,67 @@ def scibert_nlp(user_input):
         logging.error(f"Error in SciBERT NLP: {e}")
         return []
 
-terms_df = load_terms_df()
-rocket_data = pd.DataFrame()
+
 
 def get_response(user_input):
     global current_topic
-    global terms_df
+    global terms_df        
+    # Normalize user input to handle case insensitivity effectively
     user_input_normalized = user_input.strip().lower()
 
-    if conversation_history:
-        if any(x in user_input.lower() for x in ["it", "this", "that"]):
-            for entry in reversed(conversation_history):
-                if entry['user'] not in ["hello", "hi"]:
-                    user_input = f"{entry['user']}. {user_input}"
-                    break
+    # Use conversation history to add context
 
+    if conversation_history:
+        last_user_input = conversation_history[-1]['user']
+        if "it" in user_input.lower() or "this" in user_input.lower() or "that" in user_input.lower():
+            if conversation_history:
+                # Find the most recent meaningful user query in the history
+                for entry in reversed(conversation_history):
+                    if entry['user'] not in ["hello", "hi"]:  # Exclude greetings or trivial inputs
+                        user_input = f"{entry['user']}. {user_input}"
+                        break
+         # Handle ambiguous phrases like "it," "this," "that," or "tell me more"
     ambiguous_phrases = ["it", "this", "that", "tell me more", "explain more", "go on", "undertand"]
+  
     if any(phrase in user_input_normalized for phrase in ambiguous_phrases):
         if current_topic:
-            response_text =  clean_text_for_audio(fetch_wikipedia_paragraph(current_topic))
+            # Fetch Wikipedia explanation for the current topic
+            response_text = fetch_wikipedia_paragraph(current_topic)
             audio_filename = f"static/audio_{int(time.time())}.mp3"
             save_audio_gtts(response_text, audio_filename)
             return {'response': response_text, 'audio_path': audio_filename}
         else:
-            return {'response': "Could you clarify what you’d like to know more about?", 'audio_path': None}
+            response_text = "Could you clarify what you’d like to know more about?"
+            return {'response': response_text, 'audio_path': None}
+    
+  
 
-    negative_responses = ["stupid", "dumb", "bitch", "idiot", "fuck", "fuck you", "useless", "garbage", "hate", "hate you", "shut up", "bitch", "dummy", "crazy", "monkey", "weirdo", "dumb blonde", "blonde"]
+
+    # Handle specific topics and set the current topic
+    #if "photosynthesis" in user_input_normalized:
+     #   current_topic = "photosynthesis"
+     #   response_text = "Photosynthesis is the process by which green plants use sunlight to synthesize nutrients from carbon dioxide and water."
+     #   audio_filename = f"static/audio_{int(time.time())}.mp3"
+     #   save_audio_gtts(response_text, audio_filename)
+     #   return {'response': response_text, 'audio_path': audio_filename}
+
+    #if "gravity" in user_input_normalized:
+     #   current_topic = "gravity"
+      # audio_filename = f"static/audio_{int(time.time())}.mp3"
+       # save_audio_gtts(response_text, audio_filename)
+       # return {'response': response_text, 'audio_path': audio_filename}
+
+    # Handle insults or negativity in input
+    negative_responses = ["stupid", "dumb", "idiot", "useless", "garbage", "hate", "hate you", "shut up", "bitch", "dummy", "crazy", "monkey", "weirdo", "dumb blonde", "blonde"]
     for word in negative_responses:
         if word in user_input.lower():
-                    response_text="I'm here to help, and I'm always learning! Let's keep things respectful."
-                    audio_filename = f"static/audio_{int(time.time())}.mp3"
-                    save_audio_gtts(response_text, audio_filename)
-                    return {'response': response_text, 'audio_path': audio_filename}
+            return "I'm here to help, and I'm always learning! Let's keep things respectful."
 
+    # Handle apologies with a STEM-based response
     if "sorry" in user_input.lower():
-                    response_text="No worries! Let's continue with learning about STEM topics."
-                    audio_filename = f"static/audio_{int(time.time())}.mp3"
-                    save_audio_gtts(response_text, audio_filename)
-                    return {'response': response_text, 'audio_path': audio_filename}
+        return "No worries! Let's continue with learning about STEM topics."
 
-
-    key_terms = extract_key_term_nlp(user_input_normalized)
-    if key_terms:
-        user_input_normalized = key_terms
-
-  # Extract the key terms from user input using the NLP model
+    # Extract the key terms from user input using the NLP model
     key_terms = extract_key_term_nlp(user_input_normalized)
     if key_terms:
         user_input_normalized = key_terms
@@ -335,72 +324,115 @@ def get_response(user_input):
 
     # Handle vocabulary terms from science_terms.csv
 
-    if terms_df is not None and not terms_df.empty and 'keyword' in terms_df.columns:
-        matched_term = None
-        highest_score = 0
-        for keyword in terms_df['keyword'].str.lower():
-            score = fuzz.partial_ratio(user_input_normalized, keyword)
-            if score > highest_score and score > 70:
-                highest_score = score
-                matched_term = keyword
-                current_topic = keyword
 
-        if matched_term:
-            response_text =  clean_text_for_audio(terms_df[terms_df['keyword'].str.lower() == matched_term]['description'].iloc[0])
-            audio_filename = f"static/audio_{int(time.time())}.mp3"
-            save_audio_gtts(response_text, audio_filename)
-            return {'response': response_text, 'audio_path': audio_filename}
+    try:
+        # Load response.csv first
+        response_df = pd.read_csv('static/responses.csv', encoding='utf-8', on_bad_lines='skip')
+        logging.info("Response CSV loaded successfully.")
+    except FileNotFoundError:
+        logging.error("Response CSV file not found.")
+        return "I'm unable to find quick responses at the moment. Please try again later."
+    except Exception as e:
+        logging.error(f"Error loading responses.csv: {e}")
+        return "I'm unable to process responses at the moment. Please try again later."
 
-    # GPT-2 fallback
-    # Note: We use user_input, not user_input_normalized, because user_input is the original string.
-    request_user_input = request.form.get('user_input', '')
-    if not request_user_input.strip():
-        request_user_input = user_input  # If form data not found, fallback to user_input
+    if terms_df.empty:
+        try:
+            
+            terms_df = pd.read_csv('static/science_terms.csv', encoding='utf-8', on_bad_lines='skip')
+            logging.info("Terms CSV loaded successfully.")
+        except FileNotFoundError:
+            logging.error("Terms CSV file not found.")
+            return "I'm unable to provide vocabulary details at the moment because the data file is missing. Please check back later."
+        except Exception as e:
+            logging.error(f"Error loading terms CSV: {e}")
+            return "I'm unable to provide vocabulary details at the moment. Please try again later."
 
-    entities = scibert_nlp(request_user_input)
-    input_ids = gpt2_tokenizer.encode(request_user_input, return_tensors='pt')
-    outputs = gpt2_model.generate(
-        input_ids, 
-        max_length=100, 
-        num_return_sequences=1, 
-        no_repeat_ngram_size=2, 
-        do_sample=True, 
-        top_p=0.95, 
-        top_k=50
-    )
-    generated_text = gpt2_tokenizer.decode(outputs[0], skip_special_tokens=True)
+    # Search for matching vocabulary term using fuzzy matching
+    matched_term = None
+    highest_score = 0
+    for keyword in terms_df['Experiment Name'].str.lower():
+        score = fuzz.partial_ratio(user_input_normalized, keyword)
+        if score > highest_score and score > 70:  # Set threshold to 70 for fuzzy match
+            highest_score = score
+            matched_term = keyword
+            current_topic=keyword
+
+    if matched_term:
+        response_text = terms_df[terms_df['keyword'].str.lower() == matched_term]['description'].iloc[0]
+        # Generate audio for the response
+        current_topic=matched_term
+        audio_filename = f"static/audio_{int(time.time())}.mp3"
+        save_audio_gtts(response_text, audio_filename)
+        return {'response': response_text, 'audio_path': audio_filename}
+
+    
+
+    
+
+    user_input = request.form.get('user_input', '').strip()
+    entities = scibert_nlp(user_input)
+    extracted_words = [entity['word'] for entity in entities if not entity['word'].startswith("##")]
+  
+
+    
+    response_text = "Sorry, I couldn't find an answer for " + str(extracted_words) + ". Could you clarify?"
     audio_filename = f"static/audio_{int(time.time())}.mp3"
-    save_audio_gtts(generated_text, audio_filename)
+    save_audio_gtts(response_text, audio_filename)
+    return {'response': response_text, 'audio_path': audio_filename}
 
-    return {'response': generated_text, 'audio_path': audio_filename}
+    
+
+
+
+def extract_key_term_nlp(user_input):
+    """
+    Use an NLP model to extract the key term from a natural language question.
+    """
+    # Use the NLP model to extract keywords or entities
+    entities = nlp(user_input)
+    key_terms = [entity['word'] for entity in entities if entity['score'] > 0.5 and entity['entity'] in ["MISC", "ORG", "PER", "LOC"]]  # Extract entities with confidence score > 0.5
+    return " ".join(key_terms) if key_terms else user_input
 
 
 @app.route('/learn_word', methods=['POST'])
 def learn_word():
     user_input = request.form.get('word', '').strip().lower()
-    if response_df is not None and not response_df.empty and 'keyword' in response_df.columns:
-        matched_response = response_df[response_df['keyword'].str.lower() == user_input]
-        if not matched_response.empty:
-            response = matched_response.iloc[0]['response']
-            audio_filename = f"static/audio_{int(time.time())}.mp3"
-            save_audio_gtts(response, audio_filename)
-            return jsonify({'response': clean_text_for_audio(response_text), 'audio_path': audio_path})
+    response_data = {}
 
-    if vocab_df is not None and not vocab_df.empty and 'word' in vocab_df.columns:
-        matched_row = vocab_df[vocab_df['word'].str.lower() == user_input]
-        if not matched_row.empty:
-            word = matched_row.iloc[0]['word']
-            definition = matched_row.iloc[0]['definition']
-            example = matched_row.iloc[0]['example']
-            pronunciation = get_pronunciation(word)
-            global current_topic
-            current_topic = word
-            response_text =  clean_text_for_audio(f"{word}: {pronunciation}. Definition: {definition}. Example: {example}.")
-            audio_filename = f"static/audio_{word}.mp3"
-            save_audio_gtts(response_text, audio_filename)
-            return jsonify({'word': word, 'definition': definition, 'example': example, 'pronunciation': pronunciation, 'audio_path': audio_filename})
+    # Check predefined responses in response_df
+    matched_response = response_df[response_df['keyword'].str.lower() == user_input]
+    
+    if not matched_response.empty:
+        response = matched_response.iloc[0]['response']
+        audio_filename = f"static/audio_{int(time.time())}.mp3"
+        save_audio_gtts(response, audio_filename)
+        return jsonify({'response': response, 'audio_path': audio_filename})
 
-    return jsonify({'error': "Word not found in vocabulary."})          
+    # Check vocabulary in vocab_df
+    matched_row = vocab_df[vocab_df['word'].str.lower() == user_input]
+
+    if not matched_row.empty:
+        word = matched_row.iloc[0]['word']
+        definition = matched_row.iloc[0]['definition']
+        example = matched_row.iloc[0]['example']
+        pronunciation = get_pronunciation(word)
+        current_topic=word
+        response_data = {
+            'word': word,
+            'definition': definition,
+            'example': example,
+            'pronunciation': pronunciation
+        }
+
+        # Generate audio for pronunciation
+        audio_filename = f"static/audio_{word}.mp3"
+        save_audio_gtts(f"{word}: {pronunciation}. Definition: {definition}. Example: {example}.", audio_filename)
+        response_data['audio_path'] = audio_filename
+    else:
+        response_data['error'] = "Word not found in vocabulary."
+
+    return jsonify(response_data)
 
 
 

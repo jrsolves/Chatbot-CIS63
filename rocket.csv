@@ -1,0 +1,13 @@
+Experiment,Step,Method,Details,Notes,ImagePath
+Water Rocket,1,Making a Rocket,"Make a cone out of paper for stability and aesthetics.","Choose a color you like; circle diameter ~1'.","static/images/cone.jpg"
+Water Rocket,2,Making a Rocket,"Cut three fins out of cardboard to aid stability.","Use right-angled scalene triangles for better aerodynamics.","static/images/fins.jpg"
+Water Rocket,3,Making a Rocket,"Attach the nose cone and fins to the bottle.","Use a low-heat glue gun to prevent plastic melting.","static/images/fins.png"
+Water Rocket,4,Making a Launcher,"Cut the bottom off an oatmeal can for the launch pad.","Ensure the bottle fits snugly into the can.","static/images/oatmealcan.jpg"
+Water Rocket,5,Making a Launcher,"Duct tape a dowel or garden stake to the can for stability.","The dowel should protrude 0.5'–1' for secure ground placement.","static/images/dowel.png"
+Water Rocket,6,Making a Launcher,"Drill a narrow hole through a cork to fit the bike pump needle.","Use artificial corks for better durability.","static/images/cork.png"
+Water Rocket,7,Making a Launcher,"Assemble the launcher by threading the pump nozzle through the can and attaching it to the cork.","Ensure all pieces are securely attached.","static/images/waterbottlerocket.jpg"
+Water Rocket,8,Launching the Rocket,"Fill the bottle 1/3 with water and insert the cork tightly.","Ensure the cork is airtight for successful launch.","static/images/fill_bottle.png"
+Water Rocket,9,Launching the Rocket,"Set up the rocket on the launcher and stabilize the dowel in the ground.","Stand back to maintain safety.","static/images/stabilize_launcher.png"
+Water Rocket,10,Launching the Rocket,"Increase the pressure using the bike pump until the rocket launches.","Check for airtightness if the rocket doesn't launch.","static/images/pump_pressure.png"
+Water Rocket,,,Warnings: Stand at least 10 feet back during launch; handle hot glue guns carefully.,,"static/images/warning.png"
+Water Rocket,,,Tips: Use a 2-liter soda bottle; ensure all seals are airtight for better performance.,,"static/images/tips.png"
