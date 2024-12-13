@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Projects</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sticky Navigation Bar */
+        #navBar {
+            background-color: #87CEFA;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;    
+            padding: 15px 0px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #navBar img {
+            height: 50px;
+        }
+
+        #navBar ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            padding-right:25%;
+        }
+
+        #navBar ul li {
+            margin: 0 15px;
+        }
+
+        #navBar ul li a {
+            text-decoration: none;
+            color: #005f9e;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        #navBar ul li a:hover {
+            color: #fff;
+        }
+
+        /* Main Content */
+        #projects {
+            margin: 100px auto 50px;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .projects-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .project-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .project-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #005f9e;
+            text-align: center;
+        }
+
+        .project-link {
+            color: #1d72b8;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .projects-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .project-card {
+                width: 90%; /* Adjust to fit smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Navigation Bar -->
+    <div id="navBar">
+        <img src="/static/assets/curious_scientists_logo.jpg" alt="Curious Scientists Logo">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/science-projects">Science Projects</a></li>
+            <li><a href="/book-suggestions">Book Suggestions</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div id="projects">
+        <h1>Science Projects</h1>
+        <div class="projects-container">
+            {% for experiment in experiments %}
+            <div class="project-card">
+                <img src="/static/images/{{ experiment.replace(' ', '_') }}.jpg" alt="{{ experiment }}">
+                <div class="project-title">{{ experiment }}</div>
+                <a href="/experiment/{{ experiment.replace(' ', '_') }}" class="project-link">View Details</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        &copy; 2024 JRSolvesMultimedia. All rights reserved.
+    </footer>
+</body>
+</html>
+    

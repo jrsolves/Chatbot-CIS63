@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ experiment }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .experiment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .experiment-step {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #005f9e;
+        }
+
+        .step-instruction {
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #1d72b8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        #footer {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text color */
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 200px;
+            width: calc(100% - 200px);
+        }
+
+        #navBar img {
+            height: 50px; /* Adjust the height to make the logo smaller */
+            margin-right: 20px; /* Keep some space between the logo and menu items */
+            width: auto; /* Maintain aspect ratio */
+        }
+
+
+        #navBar {
+            background-color: #87CEFA;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #navBar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        #navBar ul li {
+            margin: 0 15px;
+        }
+
+        #navBar ul li a {
+            text-decoration: none;
+            color: #005f9e;
+            font-weight: bold;
+        }
+
+        #navBar ul li a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    <div id="navBar">
+        <img src="/static/assets/curious_scientists_logo.jpg" alt="Curious Scientists Logo">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/science-projects">Science Projects</a></li>
+            <li><a href="/book-suggestions">Book Suggestions</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <h1>{{ experiment }}</h1>
+    <div class="experiment-container">
+        {% for step in steps %}
+        <div class="experiment-step">
+            <div class="step-number">Step {{ step['Step Number'] }}</div>
+            <div class="step-instruction">{{ step['Instruction'] }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/science-projects" class="back-link">Back to Science Projects</a>
+
+    <!-- Footer -->
+    <footer id="footer">
+        &copy; 2024 JRSolvesMultimedia. All rights reserved.
+    </footer>
+
+</body>
+</html>
